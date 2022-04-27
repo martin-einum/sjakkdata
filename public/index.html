@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<form>
+    Navn: <input id="name"><br>
+    Gruppe: <input id="group">
+</form>
+<button onclick="postNewPlayer()">Registrer ny spiller</button>
+<button onclick="deletePlayer()">Slett spiller</button>
+<button onclick="updatePoints()">Oppdater poeng</button>
+<button onclick="getPlayer()">Finn spiller</button>
+<p id="status">&nbsp;</p>
+<p id="players"></p>
+
+
+<script>
+    async function postNewPlayer(){
+        const name = document.getElementById("name").value;
+        const group = document.getElementById("group").value;
+        const player = {
+            name: name,
+            group: group,
+            points: 0
+        }
+        const options = {
+            method: "POST",
+            headers: {
+                    "Content-Type": "application/json" //Indicates that the request body format is JSON
+                },
+            body: JSON.stringify(player) //javascript object to json string
+        }
+        const response = await fetch("/api/players", options);  // json string
+        const responseData = await response.json(); // from json string to js object1)
+        //document.getElementById("status").innerHTML = responseData.data.player.name + " er registret";
+        document.getElementById("status").innerHTML = `${responseData.data.player.name} er registrert`;    
+        getAllPlayers();
+    }
+
+    
+    async function getAllPlayers(){
+        let playerList = "";
+        const response = await fetch("/api/players"); //henter data fra app.js
+        const dataObject = await response.json(); //converts from json to js object  
+        for(let i=0; i<dataObject.data.players.length; i++){
+            playerList = playerList + dataObject.data.players[i].name + "&nbsp" + dataObject.data.players[i].group + "<br>";
+        }
+        document.getElementById("players").innerHTML = playerList;
+    }
+    getAllPlayers();
+
+    async function deletePlayer(){
+        const playerGroup = {
+            name: document.getElementById("name").value,
+            group: document.getElementById("group").value
+        }
+        const options = {
+            method: "DELETE",
+            headers: {
+                    "Content-Type": "application/json" //Indicates that the request body format is JSON
+                },
+            body: JSON.stringify(playerGroup) //javascript object to json string
+        }
+        const response = await fetch("/api/deletePlayer", options);
+        const dataObject = await response.json(); //take the readable stream and converts to js object
+        document.getElementById("status").innerHTML = dataObject.name + " er slettet";
+        getAllPlayers();
+    }
+
+    async function getPlayer(){
+        const playerId = {
+            name: document.getElementById("name").value,
+            group: document.getElementById("group").value
+        }
+        const options = {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json" //Indicates that the request body format is JSON
+            },
+            body: JSON.stringify(playerId) //javascript object to json string
+        }
+        const response = await fetch("/api/getPlayer", options);
+        const dataObject = await response.json(); 
+        console.log(dataObject);
+
+    }
+
+    async function updatePoints(){
+        const filter = {name: "martin"};
+        const options = {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(filter)
+        }
+        const response = await fetch("/api/updatePoints", options);
+        
+    }
+
+
+
+
+
+</script>
+</body>
+</html>

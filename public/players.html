@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <p id="players">
+    </p>
+<script>
+    async function getAllPlayers2(){
+        let playerList = "";
+        const response = await fetch("/api/players"); //henter data fra app.js
+        const dataObject = await response.json(); //converts from json to js object  
+        for(let i=0; i<dataObject.data.players.length; i++){
+            playerList = playerList + dataObject.data.players[i].points + " p" + "&nbsp" + dataObject.data.players[i].name + "&nbsp" + dataObject.data.players[i].group + 
+            "&nbsp" +  "<br>";
+        }
+        document.getElementById("players").innerHTML = playerList;
+    }
+    getAllPlayers2();
+</script>
+</body>
+</html>
