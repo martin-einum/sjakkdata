@@ -8,13 +8,14 @@
 </head>
 <body>
 <form>
+    <a href="players.html">Oppsett</a><br>
     Navn: <input id="name"><br>
     Gruppe: <input id="group">
 </form>
 <button onclick="postNewPlayer()">Registrer ny spiller</button>
 <button onclick="deletePlayer()">Slett spiller</button>
-<button onclick="updatePoints()">Oppdater poeng</button>
-<button onclick="getPlayer()">Finn spiller</button>
+<button onclick="updatePoints()">+1p</button>
+<button onclick="test()">Test</button>
 <p id="status">&nbsp;</p>
 <p id="players"></p>
 
@@ -38,21 +39,24 @@
         const response = await fetch("/api/players", options);  // json string
         const responseData = await response.json(); // from json string to js object1)
         //document.getElementById("status").innerHTML = responseData.data.player.name + " er registret";
-        document.getElementById("status").innerHTML = `${responseData.data.player.name} er registrert`;    
+        document.getElementById("status").innerHTML = responseData.message;    
         getAllPlayers();
     }
 
     
     async function getAllPlayers(){
         let playerList = "";
+        let playerArray = [];
+
         const response = await fetch("/api/players"); //henter data fra app.js
         const dataObject = await response.json(); //converts from json to js object  
         for(let i=0; i<dataObject.data.players.length; i++){
-            playerList = playerList + dataObject.data.players[i].name + "&nbsp" + dataObject.data.players[i].group + "<br>";
+            playerArray.push([dataObject.data.players[i].name, dataObject.data.players[i].group, dataObject.data.players[i].points]);
+            playerList = playerList + dataObject.data.players[i].points + "p&nbsp" + dataObject.data.players[i].name + 
+            "&nbsp" + dataObject.data.players[i].group + "<br>";
         }
         document.getElementById("players").innerHTML = playerList;
     }
-    getAllPlayers();
 
     async function deletePlayer(){
         const playerGroup = {
@@ -72,26 +76,12 @@
         getAllPlayers();
     }
 
-    async function getPlayer(){
-        const playerId = {
-            name: document.getElementById("name").value,
-            group: document.getElementById("group").value
-        }
-        const options = {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json" //Indicates that the request body format is JSON
-            },
-            body: JSON.stringify(playerId) //javascript object to json string
-        }
-        const response = await fetch("/api/getPlayer", options);
-        const dataObject = await response.json(); 
-        console.log(dataObject);
 
-    }
 
     async function updatePoints(){
-        const filter = {name: "martin"};
+        const filter = {
+            name: document.getElementById("name").value,
+            group: document.getElementById("group").value};
         const options = {
             method: "PATCH",
             headers: {
@@ -99,13 +89,17 @@
             },
             body: JSON.stringify(filter)
         }
-        const response = await fetch("/api/updatePoints", options);
-        
+        const response = await fetch("/api/increasePointsByOne", options);
+        const dataObject = await response.json();
+        document.getElementById("status").innerHTML = dataObject.message;
+        getAllPlayers();
     }
 
+    getAllPlayers();
 
-
-
+    function test(){
+        console.log("test");
+    }
 
 </script>
 </body>

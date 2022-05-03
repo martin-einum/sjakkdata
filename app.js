@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
-const express = require("express")
-const app = express()
+const express = require("express");
+const app = express();
 
 app.use(express.json()); //when post, modify incoming data, between req and res, from json to javascript,  docs.txt - 2
 app.use(express.static("./public"));  //use http://localhost:3000/index.html
@@ -8,18 +8,19 @@ app.use(express.static("./public"));  //use http://localhost:3000/index.html
 //CREATE PLAYER
 app.post("/api/players", async (req, res) => {
     try{
-        const newPlayer =  await Player.create(req.body);  //Player.create (mongoose) creates new document in collection
-        res.status(201).json({
-            status: "success",
-            data: {
-                player: newPlayer
-            },
-
-        })
+        if(req.body.name && req.body.group){
+            const newPlayer =  await Player.create(req.body);  //Player.create (mongoose) creates new document in collection
+            res.status(201).json({
+                message: newPlayer.name + " " + newPlayer.group + " er registrert",
+            })            
+        }else{
+            res.status(201).json({
+                message: "Fyll inn både navn og gruppe",
+            })          
+        }
     }catch(err){  //if rejected promise
         res.status(400).json({
-            status: "fail",
-            message: err
+            message: "Kunne ikke koble til server",
         })
     }
 })
@@ -27,7 +28,7 @@ app.post("/api/players", async (req, res) => {
 //GET ALL PLAYERS
 app.get("/api/players", async (req, res) => { 
     try{
-        const players = await Player.find();  //gets and converts from json to js array of objects
+        const players = await Player.find().sort({points: -1});  //gets and converts from json to js array of objects
         res.status(200).json({
             status: "success",
             result: players.length,
@@ -37,8 +38,7 @@ app.get("/api/players", async (req, res) => {
         })
     }catch(err){
         res.status(404).json({
-            status: "Får ikke kontakt med server",
-            message: err
+            message: "Får ikke kontakt med server"
         })
     }
 })
@@ -67,23 +67,25 @@ app.delete("/api/deletePlayer", async(req, res) => {
 
 })
 
-//GET PLAYER
-app.get("/api/getPlayer", async (req, res) => {
-    const player = await Player.findOne(req.body);
-    if(player === null){
+//UPDATE POINTS
+app.patch("/api/increasePointsByOne", async (req, res) => {
+    try{
+        const player = await Player.findOneAndUpdate(req.body, { $inc: { "points": 1 }});
+        if(player !== null){
+            res.json({
+                message: player.name + " er justert til " + (player.points + 1) + " poeng",
+            })        
+        }else{
+            res.json({
+                message: "Spiller ikke funnet"
+            })
+        }        
+    }catch(err){
         res.json({
-            status: "Spiller er ikke funnet"
-        })
-    }else{
-        res.json({
-            status: "Spiller er funnet"
+            message: "Får ikke kontakt med server"
         })
     }
-})
 
-//UPDATE POINTS
-app.patch("/api/updatePoints", async (req, res) => {
-    await Player.findOneAndUpdate(req.body, {points: 5});
 })
 
 //SERVER
@@ -101,7 +103,6 @@ mongoose.connect(DB, {
     console.log("DB connection successful");
 })
 
-
 const playerSchema = new mongoose.Schema({
     name: {
         type: String
@@ -113,7 +114,6 @@ const playerSchema = new mongoose.Schema({
         type: Number
     }
 })
-
 
 const Player = mongoose.model("Player", playerSchema);
 
