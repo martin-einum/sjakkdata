@@ -7,10 +7,24 @@
     <title>Document</title>
 </head>
 <body>
+    <table style="padding: 20px">
+        <tr>
+            <td style="width: 100px">SPILLERE</td>
+            <td>TABELL</td>
+        </tr>
+        <tr>
+            <td id="players2"></td>
+            <td id="players"></td>            
+        </tr>
+
+        
+    </table>
     <p id="players">
     </p>
+    <p id="players2">
+    </p>
 <script>
-    async function getAllPlayers2(){
+    async function getAllPlayers(){ //Get players sorted by points
         let playerList = "";
         const response = await fetch("/api/players"); //henter data fra app.js
         const dataObject = await response.json(); //converts from json to js object  
@@ -20,6 +34,17 @@
         }
         document.getElementById("players").innerHTML = playerList;
     }
+    async function getAllPlayers2(){ //Get players sorted alphabeticaly
+        let playerList = "";
+        const response = await fetch("/api/players2"); //henter data fra app.js
+        const dataObject = await response.json(); //converts from json to js object  
+        for(let i=0; i<dataObject.data.players.length; i++){
+            playerList = playerList +  dataObject.data.players[i].name + "&nbsp" + dataObject.data.players[i].group + 
+            "&nbsp" +  "<br>";
+        }
+        document.getElementById("players2").innerHTML = playerList;
+    }
+    getAllPlayers();
     getAllPlayers2();
 </script>
 </body>

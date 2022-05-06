@@ -98,7 +98,11 @@
     getAllPlayers();
 
     function test(){
-        console.log("test");
+        const name = document.getElementById("name").value;
+        if(name.includes(" ")){
+            name.replace(" ", "");
+            console.log(name);
+        }
     }
 
 </script>
