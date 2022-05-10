@@ -103,8 +103,32 @@ app.patch("/api/increasePointsByOne", async (req, res) => {
             message: "Får ikke kontakt med server"
         })
     }
+})
+
+//DELETE ALL PLAYERS
+app.delete("/api/deleteAllPlayers", async(req, res) => {
+    try{
+        //await Player.deleteOne(req.body);
+        const deletedPlayer = await Player.deleteMany(req.body);
+        if(deletedPlayer === null){
+            res.json({
+                status: "Ingen spiller funnet"
+            })
+        }else{
+            res.json({
+                message: "Alle spillerene er slettet"
+            })                
+        }
+    
+    }catch(err){
+        res.json({
+            status: "Får ikke kontakt med server"
+        })
+    }
 
 })
+
+
 
 //SERVER
 app.listen(3000, () => {

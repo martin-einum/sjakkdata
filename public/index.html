@@ -15,7 +15,8 @@
 <button onclick="postNewPlayer()">Registrer ny spiller</button>
 <button onclick="deletePlayer()">Slett spiller</button>
 <button onclick="updatePoints()">+1p</button>
-<button onclick="test()">Test</button>
+<button onclick="deleteAllPlayers()">Slett alle</button>
+
 <p id="status">&nbsp;</p>
 <p id="players"></p>
 
@@ -76,7 +77,22 @@
         getAllPlayers();
     }
 
-
+    async function deleteAllPlayers(){
+        const playerNames = {
+            dummyValue: undefined  //Delete all with dummyValue undefined, and thats all elements
+        }
+        const options = {
+            method: "DELETE",
+            headers: {
+                    "Content-Type": "application/json" //Indicates that the request body format is JSON
+                },
+            body: JSON.stringify(playerNames) //javascript object to json string
+        }
+        const response = await fetch("/api/deleteAllPlayers", options);
+        const dataObject = await response.json(); //take the readable stream and converts to js object
+        document.getElementById("status").innerHTML = dataObject.message;
+        getAllPlayers();
+    }
 
     async function updatePoints(){
         const filter = {
@@ -94,6 +110,7 @@
         document.getElementById("status").innerHTML = dataObject.message;
         getAllPlayers();
     }
+
 
     getAllPlayers();
 
