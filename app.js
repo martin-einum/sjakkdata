@@ -5,6 +5,29 @@ const app = express();
 app.use(express.json()); //when post, modify incoming data, between req and res, from json to javascript,  docs.txt - 2
 app.use(express.static("./public"));  //use http://localhost:3000/index.html
 
+
+//GET ALL PLAYERS, SORTED BY POINTS
+app.get("/api/players", async (req, res) => { 
+    console.log(req.url);
+    try{
+        const players = await Player.find().sort({points: -1});  //gets and converts from json to js array of objects
+        res.status(200).json({
+            status: "success",
+            result: players.length,
+            data: {
+                players
+            }
+        })
+    }catch(err){
+        res.status(404).json({
+            message: "Får ikke kontakt med server"
+        })
+    }
+})
+
+
+
+
 //CREATE PLAYER
 app.post("/api/players", async (req, res) => {
     try{
@@ -25,23 +48,7 @@ app.post("/api/players", async (req, res) => {
     }
 })
 
-//GET ALL PLAYERS, SORTED BY POINTS
-app.get("/api/players", async (req, res) => { 
-    try{
-        const players = await Player.find().sort({points: -1});  //gets and converts from json to js array of objects
-        res.status(200).json({
-            status: "success",
-            result: players.length,
-            data: {
-                players
-            }
-        })
-    }catch(err){
-        res.status(404).json({
-            message: "Får ikke kontakt med server"
-        })
-    }
-})
+
 
 //GET ALL PLAYERS, SORTED ALPHABETICLY
 app.get("/api/players2", async (req, res) => { 

@@ -12,16 +12,37 @@
     Navn: <input id="name"><br>
     Gruppe: <input id="group">
 </form>
-<button onclick="postNewPlayer()">Registrer ny spiller</button>
-<button onclick="deletePlayer()">Slett spiller</button>
-<button onclick="updatePoints()">+1p</button>
-<button onclick="deleteAllPlayers()">Slett alle</button>
+<button id="registerButton" onclick="postNewPlayer()">Registrer ny spiller</button>
+<button id="deleteOneButton" onclick="deletePlayer()">Slett spiller</button>
+<button id="plussOnePointButton" onclick="updatePoints()">+1p</button>
+<button id="deleteAllButton" onclick="deleteAllPlayers()">Slett alle</button>
 
 <p id="status">&nbsp;</p>
 <p id="players"></p>
+<form>
+    <input id="inputCode"></input>
+</form>
+<button id="unlockButton" onclick="enableAll()">Lås opp</button>
 
 
 <script>
+
+async function getAllPlayers(){
+    //let playerArray = [];  //array of all players
+    let playerList = "";
+    const response = await fetch("/api/players"); //henter data fra app.js
+    const dataObject = await response.json(); //converts from json to js object  
+    for(let i=0; i<dataObject.data.players.length; i++){
+        //playerArray.push([dataObject.data.players[i].name, dataObject.data.players[i].group, dataObject.data.players[i].points]);
+        playerList = playerList + dataObject.data.players[i].points + "p&nbsp" + dataObject.data.players[i].name + 
+        "&nbsp" + dataObject.data.players[i].group + "<br>";
+    }
+    document.getElementById("players").innerHTML = playerList;
+    console.log(dataObject.status);
+}
+
+
+
     async function postNewPlayer(){
         const name = document.getElementById("name").value;
         const group = document.getElementById("group").value;
@@ -44,20 +65,7 @@
         getAllPlayers();
     }
 
-    
-    async function getAllPlayers(){
-        let playerList = "";
-        let playerArray = [];
 
-        const response = await fetch("/api/players"); //henter data fra app.js
-        const dataObject = await response.json(); //converts from json to js object  
-        for(let i=0; i<dataObject.data.players.length; i++){
-            playerArray.push([dataObject.data.players[i].name, dataObject.data.players[i].group, dataObject.data.players[i].points]);
-            playerList = playerList + dataObject.data.players[i].points + "p&nbsp" + dataObject.data.players[i].name + 
-            "&nbsp" + dataObject.data.players[i].group + "<br>";
-        }
-        document.getElementById("players").innerHTML = playerList;
-    }
 
     async function deletePlayer(){
         const playerGroup = {
@@ -111,16 +119,40 @@
         getAllPlayers();
     }
 
+    function disableAll(){
+       document.getElementById("name").disabled = true; 
+       document.getElementById("group").disabled = true; 
+       document.getElementById("registerButton").disabled = true; 
+       document.getElementById("deleteOneButton").disabled = true; 
+       document.getElementById("plussOnePointButton").disabled = true; 
+       document.getElementById("deleteAllButton").disabled = true; 
+    }
 
-    getAllPlayers();
-
-    function test(){
-        const name = document.getElementById("name").value;
-        if(name.includes(" ")){
-            name.replace(" ", "");
-            console.log(name);
+    function enableAll(){
+        if(document.getElementById("inputCode").value === "martin"){
+            document.getElementById("name").disabled = false; 
+            document.getElementById("group").disabled = false; 
+            document.getElementById("registerButton").disabled = false; 
+            document.getElementById("deleteOneButton").disabled = false; 
+            document.getElementById("plussOnePointButton").disabled = false; 
+            document.getElementById("deleteAllButton").disabled = false; 
         }
     }
+
+    getAllPlayers();
+    disableAll();
+
+    // function test(){
+    //     const name = document.getElementById("name").value;
+    //     if(name.includes(" ")){
+    //         name.replace(" ", "");
+    //         console.log(name);
+    //     }
+    // }
+
+
+    
+
 
 </script>
 </body>
