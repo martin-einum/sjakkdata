@@ -8,7 +8,6 @@ app.use(express.static("./public"));  //use http://localhost:3000/index.html
 
 //GET ALL PLAYERS, SORTED BY POINTS
 app.get("/api/players", async (req, res) => { 
-    console.log(req.url);
     try{
         const players = await Player.find().sort({points: -1});  //gets and converts from json to js array of objects
         res.status(200).json({

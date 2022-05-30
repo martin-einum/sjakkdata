@@ -15,6 +15,7 @@
 <button id="registerButton" onclick="postNewPlayer()">Registrer ny spiller</button>
 <button id="deleteOneButton" onclick="deletePlayer()">Slett spiller</button>
 <button id="plussOnePointButton" onclick="updatePoints()">+1p</button>
+<button id="minusOnePointButton" onclick="updatePoints2()">-1p</button>
 <button id="deleteAllButton" onclick="deleteAllPlayers()">Slett alle</button>
 
 <p id="status">&nbsp;</p>
@@ -125,6 +126,7 @@ async function getAllPlayers(){
        document.getElementById("registerButton").disabled = true; 
        document.getElementById("deleteOneButton").disabled = true; 
        document.getElementById("plussOnePointButton").disabled = true; 
+       document.getElementById("minusOnePointButton").disabled = true; 
        document.getElementById("deleteAllButton").disabled = true; 
     }
 
@@ -135,6 +137,7 @@ async function getAllPlayers(){
             document.getElementById("registerButton").disabled = false; 
             document.getElementById("deleteOneButton").disabled = false; 
             document.getElementById("plussOnePointButton").disabled = false; 
+            document.getElementById("minusOnePointButton").disabled = false; 
             document.getElementById("deleteAllButton").disabled = false; 
         }
     }
