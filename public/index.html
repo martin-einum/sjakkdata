@@ -82,7 +82,7 @@ async function getAllPlayers(){
         }
         const response = await fetch("/api/deletePlayer", options);
         const dataObject = await response.json(); //take the readable stream and converts to js object
-        document.getElementById("status").innerHTML = dataObject.name + " er slettet";
+        document.getElementById("status").innerHTML = dataObject.message;
         getAllPlayers();
     }
 
@@ -103,7 +103,7 @@ async function getAllPlayers(){
         getAllPlayers();
     }
 
-    async function updatePoints(){
+    async function updatePoints(){  //increase points by 1
         const filter = {
             name: document.getElementById("name").value,
             group: document.getElementById("group").value};
@@ -115,6 +115,24 @@ async function getAllPlayers(){
             body: JSON.stringify(filter)
         }
         const response = await fetch("/api/increasePointsByOne", options);
+        const dataObject = await response.json();
+        document.getElementById("status").innerHTML = dataObject.message;
+        getAllPlayers();
+    }
+
+    //NY!!!
+    async function updatePoints2(){  //increase points by 1
+        const filter = {
+            name: document.getElementById("name").value,
+            group: document.getElementById("group").value};
+        const options = {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(filter)
+        }
+        const response = await fetch("/api/decreasePointsByOne", options);
         const dataObject = await response.json();
         document.getElementById("status").innerHTML = dataObject.message;
         getAllPlayers();

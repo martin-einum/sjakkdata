@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const express = require("express");
 const app = express();
 
+
 app.use(express.json()); //when post, modify incoming data, between req and res, from json to javascript,  docs.txt - 2
 app.use(express.static("./public"));  //use http://localhost:3000/index.html
 
@@ -74,12 +75,11 @@ app.delete("/api/deletePlayer", async(req, res) => {
         const deletedPlayer = await Player.findOneAndDelete(req.body);
         if(deletedPlayer === null){
             res.json({
-                status: "Ingen spiller funnet"
+                message: "Ingen spiller funnet"
             })
         }else{
             res.json({
-                name: req.body.name,
-                status: "Spiller er slettet"
+                message: "Spiller er slettet"
             })                
         }
     
@@ -98,6 +98,25 @@ app.patch("/api/increasePointsByOne", async (req, res) => {
         if(player !== null){
             res.json({
                 message: player.name + " er justert til " + (player.points + 1) + " poeng",
+            })        
+        }else{
+            res.json({
+                message: "Spiller ikke funnet"
+            })
+        }        
+    }catch(err){
+        res.json({
+            message: "Får ikke kontakt med server"
+        })
+    }
+})
+
+app.patch("/api/decreasePointsByOne", async (req, res) => {
+    try{
+        const player = await Player.findOneAndUpdate(req.body, { $inc: { "points": -1 }});
+        if(player !== null){
+            res.json({
+                message: player.name + " er justert til " + (player.points - 1) + " poeng",
             })        
         }else{
             res.json({
